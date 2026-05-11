@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ozak's Flight Club</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body data-user-email="{{ current_user.email if current_user else '' }}" data-user-name="{{ current_user.first_name if current_user else '' }}">
+    <main class="page-shell">
+        {% set page = active_page|default('home') %}
+        {% set show_home = page == 'home' %}
+        {% set show_all = false %}
+        <header class="site-nav" aria-label="Primary navigation">
+            <a class="brand-link" href="{{ url_for('index') }}">Ozak's Flight Club</a>
+            <nav class="nav-links">
+                <a class="{{ 'active' if page == 'signup' else '' }}" href="{{ url_for('signup_page') }}">Signup</a>
+                <a class="{{ 'active' if page == 'login' else '' }}" href="{{ url_for('login_page') }}">Login</a>
+                <a class="{{ 'active' if page == 'settings' else '' }}" href="{{ url_for('settings_page') }}">Settings</a>
+                <a class="{{ 'active' if page == 'account-tools' else '' }}" href="{{ url_for('account_tools_page') }}">Account Tools</a>
+                <a class="{{ 'active' if page == 'wishlists' else '' }}" href="{{ url_for('wishlists_page') }}">Wishlists</a>
+                <a class="{{ 'active' if page == 'tracked-destinations' else '' }}" href="{{ url_for('tracked_destinations_page') }}">Tracked Destinations</a>
+                <a class="{{ 'active' if page == 'live-searches' else '' }}" href="{{ url_for('live_searches_page') }}">Live Searches</a>
+            </nav>
+        </header>
+
+        {% if show_home %}
+        <section class="hero" id="home">
+            <div class="hero-copy">
+                <p class="eyebrow">Cheap Flight Deal Notifications</p>
+                <h1>Track better fares from London without watching prices all day.</h1>
+                <p class="hero-text">
+                    Create an account, run a fresh deal scan, and manage your alert preferences from one place.
+                </p>
+
+                <div class="stats-grid">
+                    <article class="stat-card">
+                        <span class="stat-label">Subscribers</span>
+                        <strong class="stat-value" id="subscriberCount">{{ stats.subscriber_count }}</strong>
+                    </article>
+                    <article class="stat-card">
+                        <span class="stat-label">Wishlist Saves</span>
+                        <strong class="stat-value" id="wishlistCount">{{ stats.wishlist_count }}</strong>
+                    </article>
+                    <article class="stat-card">
+                        <span class="stat-label">Routes Tracked</span>
+                        <strong class="stat-value">{{ stats.destination_count }}</strong>
+                    </article>
+                </div>
+            </div>
+
+            <aside class="hero-panel">
+                <h2>Account Status</h2>
+                <div id="authSummary" class="auth-summary">
+                    {% if current_user %}
+                    <p class="auth-headline">Signed in as {{ current_user.first_name }}.</p>
+                    <p class="panel-note">Your wishlist and alerts are now tied to {{ current_user.email }}.</p>
+                    {% else %}
+                    <p class="auth-headline">Sign up or log in to save routes.</p>
+                    <p class="panel-note">Imported subscribers can activate their account by registering with the same email.</p>
+                    {% endif %}
+                </div>
+                <button type="button" class="ghost-btn" id="logoutBtn" {% if not current_user %}hidden{% endif %}>Log Out</button>
+            </aside>
+        </section>
+        {% endif %}
+
+        {% if show_all or page in ['signup', 'login'] %}
+        <section class="content-grid auth-grid {{ 'single-grid' if not show_all else '' }}">
+            {% if show_all or page == 'signup' %}
+            <section class="card" id="signup">
+                <div class="section-heading">
+                    <div>
+                        <p class="section-kicker">Signup</p>
+                        <h2>Create your account</h2>
+                    </div>
+                </div>
+
+                <form id="registerForm" class="stack">
+                    <div class="field-grid">
+                        <label class="field">
+                            <span>First Name</span>
+                            <input type="text" id="firstName" placeholder="Ava" required>
+                        </label>
+                        <label class="field">
+                            <span>Last Name</span>
+                            <input type="text" id="lastName" placeholder="Patel" required>
+                        </label>
+                    </div>
+
+                    <label class="field">
+                        <span>Email Address</span>
+                        <input type="email" id="email" placeholder="you@example.com" required>
+                    </label>
+
+                    <label class="field">
+                        <span>Password</span>
+                        <input type="password" id="registerPassword" placeholder="At least 8 characters" required minlength="8">
+                    </label>
+
+                    <button type="submit" class="primary-btn">Create Account</button>
+                    <p class="form-msg" id="formMsg"></p>
+                </form>
+            </section>
+            {% endif %}
+
+            {% if show_all or page == 'login' %}
+            <section class="card" id="login">
+                <div class="section-heading">
+                    <div>
+                        <p class="section-kicker">Login</p>
+                        <h2>Access your saved routes</h2>
+                    </div>
+                </div>
+
+                <form id="loginForm" class="stack">
+                    <label class="field">
+                        <span>Email Address</span>
+                        <input type="email" id="loginEmail" placeholder="you@example.com" required>
+                    </label>
+
+                    <label class="field">
+                        <span>Password</span>
+                        <input type="password" id="loginPassword" placeholder="Your password" required>
+                    </label>
+
+                    <button type="submit" class="secondary-btn">Log In</button>
+                    <p class="form-msg" id="loginMsg"></p>
+                </form>
+            </section>
+            {% endif %}
+        </section>
+        {% endif %}
+
+        {% if show_all or page in ['settings', 'account-tools'] %}
+        <section class="content-grid {{ 'single-grid' if not show_all else '' }}">
+            {% if show_all or page == 'settings' %}
+            <section class="card" id="settings">
+                <div class="section-heading">
+                    <div>
+                        <p class="section-kicker">Settings</p>
+                        <h2>Alert preferences</h2>
+                    </div>
+                </div>
+
+                <form id="settingsForm" class="stack">
+                    <div class="field-grid">
+                        <label class="field">
+                            <span>Alert Frequency</span>
+                            <select id="alertFrequency">
+                                <option value="instant">Instant</option>
+                                <option value="daily">Daily Digest</option>
+                                <option value="weekly">Weekly Digest</option>
+                            </select>
+                        </label>
+
+                        <label class="field">
+                            <span>Preferred Origin</span>
+                            <input type="text" id="preferredOrigin" placeholder="LON" maxlength="3">
+                        </label>
+                    </div>
+
+                    <label class="field">
+                        <span>Max Price Cap (optional, {{ currency_symbol }})</span>
+                        <input type="number" id="maxPrice" min="0" step="1" placeholder="Leave blank for no cap">
+                    </label>
+
+                    <button type="submit" class="secondary-btn">Save Settings</button>
+                    <p class="form-msg" id="settingsMsg"></p>
+                </form>
+            </section>
+            {% endif %}
+
+            {% if show_all or page == 'account-tools' %}
+            <section class="card" id="account-tools">
+                <div class="section-heading">
+                    <div>
+                        <p class="section-kicker">Account Tools</p>
+                        <h2>Password reset and deletion</h2>
+                    </div>
+                </div>
+
+                <form id="resetRequestForm" class="stack account-block">
+                    <label class="field">
+                        <span>Password Reset Email</span>
+                        <input type="email" id="resetEmail" placeholder="you@example.com">
+                    </label>
+                    <button type="submit" class="ghost-btn">Request Reset</button>
+                    <p class="form-msg" id="resetRequestMsg"></p>
+                </form>
+
+                <form id="resetConfirmForm" class="stack account-block">
+                    <label class="field">
+                        <span>Reset Token</span>
+                        <input type="text" id="resetToken" placeholder="Paste token">
+                    </label>
+                    <label class="field">
+                        <span>New Password</span>
+                        <input type="password" id="resetPassword" placeholder="At least 8 characters">
+                    </label>
+                    <button type="submit" class="ghost-btn">Set New Password</button>
+                    <p class="form-msg" id="resetConfirmMsg"></p>
+                </form>
+
+                <form id="deleteAccountForm" class="stack account-block">
+                    <label class="field">
+                        <span>Type DELETE to confirm</span>
+                        <input type="text" id="deleteConfirmation" placeholder="DELETE">
+                    </label>
+                    <button type="submit" class="danger-btn">Delete Account</button>
+                    <p class="form-msg" id="deleteMsg"></p>
+                </form>
+            </section>
+            {% endif %}
+        </section>
+        {% endif %}
+
+        {% if show_all or page in ['wishlists', 'tracked-destinations'] %}
+        <section class="content-grid {{ 'single-grid' if not show_all else '' }}">
+            {% if show_all or page == 'wishlists' %}
+            <section class="card" id="wishlists">
+                <div class="section-heading">
+                    <div>
+                        <p class="section-kicker">Wishlist</p>
+                        <h2>Save the routes you care about</h2>
+                    </div>
+                </div>
+
+                <form id="wishlistForm" class="stack">
+                    <label class="field">
+                        <span>Destination City</span>
+                        <select id="wishlistCity" required>
+                            <option value="">Choose a tracked destination</option>
+                            {% for d in destinations %}
+                            <option value="{{ d.city }}">{{ d.city }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+
+                    <div class="button-row">
+                        <button type="submit" class="secondary-btn">Save to Wishlist</button>
+                        <button type="button" class="ghost-btn" id="loadWishlistBtn">Refresh Wishlist</button>
+                    </div>
+                    <p class="form-msg" id="wishlistMsg"></p>
+                </form>
+
+                <div class="wishlist-box">
+                    <h3>Your Saved Cities</h3>
+                    <div id="wishlist" class="wishlist-list empty-state">Log in to load your wishlist.</div>
+                </div>
+            </section>
+            {% endif %}
+
+            {% if show_all or page == 'tracked-destinations' %}
+            <section class="card" id="tracked-destinations">
+                <div class="section-heading">
+                    <div>
+                        <p class="section-kicker">Tracked Destinations</p>
+                        <h2>Current threshold watchlist</h2>
+                    </div>
+                </div>
+
+                <div class="destinations-grid">
+                    {% for d in destinations %}
+                    <article class="dest-card">
+                        <p class="dest-city">{{ d.city }}</p>
+                        <p class="dest-code">{{ d.iataCode or 'Pending code' }}</p>
+                        <p class="dest-threshold">Alert below {{ currency_symbol }}{{ d.lowestPrice }}</p>
+                    </article>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+        </section>
+        {% endif %}
+
+        {% if show_all or page == 'live-searches' %}
+        <section class="card" id="live-searches">
+            <div class="section-heading spread">
+                <div>
+                    <p class="section-kicker">Live Search</p>
+                    <h2>Run the latest deal scan</h2>
+                </div>
+                <button id="searchBtn" class="primary-btn">Search for Deals</button>
+            </div>
+
+            <div class="progress" id="progress" hidden>
+                <span class="spinner" aria-hidden="true"></span>
+                <span id="progressText">Checking fares...</span>
+            </div>
+
+            <div id="results" class="results-grid">
+                <div class="empty-state result-empty">
+                    Run a search to see current fare results for the tracked routes.
+                </div>
+            </div>
+        </section>
+        {% endif %}
+    </main>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

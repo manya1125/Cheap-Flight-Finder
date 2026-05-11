@@ -1,0 +1,96 @@
+{
+    "prices": [
+        {
+            "id": 1,
+            "city": "Paris",
+            "iataCode": "ORY",
+            "lowestPrice": 21000
+        },
+        {
+            "id": 2,
+            "city": "Berlin",
+            "iataCode": "BER",
+            "lowestPrice": 26000
+        },
+        {
+            "id": 3,
+            "city": "Tokyo",
+            "iataCode": "NRT",
+            "lowestPrice": 42000
+        },
+        {
+            "id": 4,
+            "city": "Sydney",
+            "iataCode": "SYD",
+            "lowestPrice": 52500
+        },
+        {
+            "id": 5,
+            "city": "Istanbul",
+            "iataCode": "IST",
+            "lowestPrice": 16000
+        },
+        {
+            "id": 6,
+            "city": "New York",
+            "iataCode": "JFK",
+            "lowestPrice": 31500
+        },
+        {
+            "id": 7,
+            "city": "San Francisco",
+            "iataCode": "SFO",
+            "lowestPrice": 37000
+        },
+        {
+            "id": 8,
+            "city": "Mumbai",
+            "iataCode": "NMI",
+            "lowestPrice": 29500
+        },
+        {
+            "id": 9,
+            "city": "Dubai",
+            "iataCode": "DXB",
+            "lowestPrice": 21000
+        },
+        {
+            "id": 10,
+            "city": "Bangkok",
+            "iataCode": "FKI",
+            "lowestPrice": 37000
+        }
+    ],
+    "users": [
+        {
+            "firstName": "Ozak",
+            "lastName": "kashyap",
+            "email": "Ozakclub07@gmail.com"
+        },
+        {
+            "firstName": "Ozak",
+            "lastName": "kas",
+            "email": "abc@gmail.com"
+        },
+        {
+            "firstName": "Ozak",
+            "lastName": "rana",
+            "email": "ranaOzak03@gmail.com"
+        },
+        {
+            "firstName": "Morish",
+            "lastName": "Rana",
+            "email": "ranamorish03@gmail.com"
+        },
+        {
+            "firstName": "Manya",
+            "lastName": "Nanda",
+            "email": "nandamanya2@gmail.com"
+        },
+        {
+            "firstName": "Morish",
+            "lastName": "Rana",
+            "email": "ranamorish03@gmail.com"
+        }
+    ]
+}
